@@ -29,6 +29,35 @@ class Home extends Component {
             });
     };
 
+    moveDown = (index) => {
+
+        console.log("index:"+index);
+        let newArr = this.state.postList;
+        let temp = newArr[index];
+
+        newArr[index] = newArr[index+1];
+        newArr[index+1] = temp;
+
+        console.log("new Array : "+ newArr)
+        this.setState({
+            postList: newArr
+        })
+    };
+
+    moveUp = (index) => {
+
+        let newArr = this.state.postList;
+        let temp = newArr[index];
+
+        newArr[index] = newArr[index-1];
+        newArr[index-1] = temp;
+
+        console.log("new Array : "+ newArr)
+        this.setState({
+            postList: newArr
+        })
+    };
+
     render() {
         return (
             <div className="bg-hero-pattern bg-no-repeat bg-cover">
@@ -45,7 +74,7 @@ class Home extends Component {
                                         <div className="col-span-1 ...">
                                             <button
                                                 className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4"
-                                                onClick={()=>{console.log("presses")}}
+                                                onClick={()=>this.moveDown(i)}
                                             >
                                                 down
                                             </button>
@@ -54,7 +83,7 @@ class Home extends Component {
                                                 <div className="col-span-1 ...">
                                                     <button
                                                         className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4"
-                                                        onClick={()=>{console.log("presses")}}
+                                                        onClick={()=>this.moveUp(i)}
                                                     >
                                                         up
                                                     </button>
@@ -63,13 +92,13 @@ class Home extends Component {
                                                 <div className="col-span-1 ...">
                                                     <button
                                                         className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4"
-                                                        onClick={()=>{console.log("presses")}}
+                                                        onClick={()=>this.moveUp(i)}
                                                     >
                                                         up
                                                     </button>
                                                     <button
                                                         className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4"
-                                                        onClick={()=>{console.log("presses")}}
+                                                        onClick={()=>this.moveDown(i)}
                                                     >
                                                         down
                                                     </button>
