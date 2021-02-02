@@ -5,7 +5,9 @@ class Home extends Component {
 
     dataArr;
     state = {
-        postList: null
+        postList: null,
+        actionList: [],
+        actionid:-1
     };
 
     constructor(props){
@@ -29,93 +31,144 @@ class Home extends Component {
             });
     };
 
-    moveDown = (index) => {
+    movePost = (id,currentp,newp) => {
 
-        console.log("index:"+index);
         let newArr = this.state.postList;
-        let temp = newArr[index];
+        let temp = newArr[currentp];
 
-        newArr[index] = newArr[index+1];
-        newArr[index+1] = temp;
+        newArr[currentp] = newArr[newp];
+        newArr[newp] = temp;
 
-        console.log("new Array : "+ newArr)
         this.setState({
             postList: newArr
-        })
+        });
+
     };
 
-    moveUp = (index) => {
+    moveDown = (id,index) => {
 
-        let newArr = this.state.postList;
-        let temp = newArr[index];
+        this.movePost(id,index,index+1);
 
-        newArr[index] = newArr[index-1];
-        newArr[index-1] = temp;
+        this.addActions(id,index, index+1);
 
-        console.log("new Array : "+ newArr)
+    };
+
+    moveUp = (id,index) => {
+
+        this.movePost(id,index,index-1);
+
+        this.addActions(id,index, index-1);
+    };
+
+    addActions = (id, index, newindex) =>{
+
+        const action = {
+            actionid : this.state.actionid+1,
+            id: id,
+            before: index,
+            now: newindex,
+            display: true
+        };
         this.setState({
-            postList: newArr
+            actionList: [...this.state.actionList, action],
+            actionid : this.state.actionid+1
+        });
+    };
+
+    timetravel = (actionid,id,currentp,lastp) => {
+        this.movePost(id,currentp,lastp);
+
+        let tempList = [...this.state.actionList];
+        let tempobj = {...tempList[actionid]};
+        tempobj.display = false;
+
+        tempList[actionid] = tempobj;
+        this.setState({
+            actionList: tempList
         })
+
+
     };
 
     render() {
-        return (
-            <div className="bg-hero-pattern bg-no-repeat bg-cover">
-                <div className="flex flex-row ...">
-                    <div className="flex-1 ...">
-                        {(this.state.postList!=null)?this.state.postList.map((post,i) => (
-                            <div className="box-border  p-4 border-4 m-10 ..." key={post.id}>
-                                <div className="grid grid-cols-6 gap-4 items-center">
-                                    <div className="col-span-5 ...">
-                                        <p className="font-extrabold">{post.title}</p>
-                                        <p className="font-normal">{post.body}</p>
-                                    </div>
-                                    {(i==0)?
-                                        <div className="col-span-1 ...">
-                                            <button
-                                                className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4"
-                                                onClick={()=>this.moveDown(i)}
-                                            >
-                                                down
-                                            </button>
-                                        </div>
-                                        :((i==this.state.postList.length-1)?
-                                                <div className="col-span-1 ...">
-                                                    <button
-                                                        className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4"
-                                                        onClick={()=>this.moveUp(i)}
-                                                    >
-                                                        up
-                                                    </button>
-                                                </div>
-                                                :
-                                                <div className="col-span-1 ...">
-                                                    <button
-                                                        className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4"
-                                                        onClick={()=>this.moveUp(i)}
-                                                    >
-                                                        up
-                                                    </button>
-                                                    <button
-                                                        className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4"
-                                                        onClick={()=>this.moveDown(i)}
-                                                    >
-                                                        down
-                                                    </button>
-                                                </div>
-
-                                        )
-                                    }
-
+        return <div className="bg-hero-pattern bg-no-repeat bg-cover">
+            <div className="flex flex-row ...">
+                <div className="flex-1 ...">
+                    {(this.state.postList != null) ? this.state.postList.map((post, i) => (
+                        <div className="p-4 m-10 rounded bg-white shadow-xl ..." key={post.id}>
+                            <div className="grid grid-cols-6 gap-4 items-center">
+                                <div className="col-span-5 ...">
+                                    <p className="font-extrabold">{post.title}</p>
+                                    <p className="font-normal">{post.body}</p>
                                 </div>
+                                {(i === 0) ?
+                                    <div className="col-span-1 ...">
+                                        <button
+                                            className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4"
+                                            onClick={() => this.moveDown(post.id,i)}
+                                        >
+                                            down
+                                        </button>
+                                    </div>
+                                    : ((i === this.state.postList.length - 1) ?
+                                            <div className="col-span-1 ...">
+                                                <button
+                                                    className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4"
+                                                    onClick={() => this.moveUp(post.id,i)}
+                                                >
+                                                    up
+                                                </button>
+                                            </div>
+                                            :
+                                            <div className="col-span-1 ...">
+                                                <button
+                                                    className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4"
+                                                    onClick={() => this.moveUp(post.id,i)}
+                                                >
+                                                    up
+                                                </button>
+                                                <button
+                                                    className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4"
+                                                    onClick={() => this.moveDown(post.id,i)}
+                                                >
+                                                    down
+                                                </button>
+                                            </div>
+
+                                    )
+                                }
 
                             </div>
-                        )):null}
+
+                        </div>
+                    )) : null}
+                </div>
+                <div className="flex-1 ...">
+                    <div className="m-10 mb-0 bg-white rounded rounded-b-none shadow-xl ...">
+                        List of actions comitted
                     </div>
-                    <div className="flex-1 ...">right</div>
+                    <div className="m-10 pt-10 pb-10 mt-0 bg-gray-100 rounded rounded-t-none shadow-xl ...">
+                        {this.state.actionList.map((data, index) => {
+                            return (this.state.actionList[index].display)?<div className="ml-10 mr-10 p-6 bg-white  ...">
+                                <div className="grid grid-cols-8 gap-4 items-center">
+                                    <div className="col-span-6 ...">
+                                        <p>Moved post {data.id} from index {data.before} to index {data.now}</p>
+                                    </div>
+                                    <div className="col-span-2 ...">
+                                        <button
+                                            className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4"
+                                            onClick={() => this.timetravel(data.actionid,data.id,data.now,data.before)}
+                                        >
+                                            Time Travel
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>:null
+                        })}
+                    </div>
                 </div>
             </div>
-        );
+        </div>;
     }
 }
 
